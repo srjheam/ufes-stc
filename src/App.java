@@ -11,6 +11,8 @@ public class App {
             return;
         }
 
-        System.out.println("Hello, World!");
+        CmdArgs cmdArgs = CmdParser.parseCmdArgs(args);
+
+        
     }
 }
