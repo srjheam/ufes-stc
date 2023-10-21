@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Candidato {
     private String numero;
     private Partido partido;

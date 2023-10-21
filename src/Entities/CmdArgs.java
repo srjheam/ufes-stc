@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class CmdArgs {
     private Cargo tipoCargo;
     private String caminhoArquivoCandidatos;
