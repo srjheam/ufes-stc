@@ -1,3 +1,4 @@
 exemplos/
 *.jar
 bin/*.class
+*.csv
