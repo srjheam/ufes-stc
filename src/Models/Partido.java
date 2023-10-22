@@ -5,4 +5,10 @@ public class Partido {
     private String sigla;
     private String numeroFederacao; // número da federação; null se não tem federacao
     private Set<Candidato> candidatos;
+
+    public Partido(String numero, String sigla, String numeroFederacao) {
+        this.numero = numero;
+        this.sigla = sigla;
+        this.numeroFederacao = numeroFederacao;
+    }
 }
