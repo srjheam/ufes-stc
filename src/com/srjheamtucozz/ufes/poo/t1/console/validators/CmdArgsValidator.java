@@ -1,3 +1,4 @@
+package com.srjheamtucozz.ufes.poo.t1.console.validators;
 import java.io.File;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Paths;
@@ -5,7 +6,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
-public class CmdValidator {
+import com.srjheamtucozz.ufes.poo.common.util.Validation;
+
+public class CmdArgsValidator {
     public static Validation validateCmdArgs(String[] args) {
         Validation validation = new Validation();
 

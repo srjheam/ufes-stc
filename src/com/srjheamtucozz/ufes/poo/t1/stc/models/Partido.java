@@ -1,3 +1,5 @@
+package com.srjheamtucozz.ufes.poo.t1.stc.models;
+
 import java.util.Set;
 
 public class Partido {

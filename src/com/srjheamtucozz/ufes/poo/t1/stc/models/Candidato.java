@@ -1,4 +1,8 @@
+package com.srjheamtucozz.ufes.poo.t1.stc.models;
+
 import java.time.LocalDate;
+
+import com.srjheamtucozz.ufes.poo.t1.stc.enums.Cargo;
 
 public class Candidato {
     private Cargo cargo;
@@ -18,4 +22,32 @@ public class Candidato {
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
     }
+
+    public Cargo getCargo() {
+        return cargo;
+    }
+
+    public boolean isDeferido() {
+        return deferido;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public String getNomeUrna() {
+        return nomeUrna;
+    }
+
+    public Partido getPartido() {
+        return partido;
+    }
+
+    public LocalDate getDataNascimento() {
+        return dataNascimento;
+    }
+
+    public boolean isSexo() {
+        return sexo;
+    }    
 }

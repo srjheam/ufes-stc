@@ -1,4 +1,0 @@
-enum Cargo {
-    DEPUTADO_ESTADUAL,
-    DEPUTADO_FEDERAL
-}

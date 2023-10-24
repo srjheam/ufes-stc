@@ -1,4 +1,4 @@
 exemplos/
 *.jar
-bin/*.class
+bin/**/*.class
 *.csv

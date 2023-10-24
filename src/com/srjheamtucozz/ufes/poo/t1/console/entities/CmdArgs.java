@@ -1,4 +1,8 @@
+package com.srjheamtucozz.ufes.poo.t1.console.entities;
+
 import java.time.LocalDate;
+
+import com.srjheamtucozz.ufes.poo.t1.stc.enums.Cargo;
 
 public class CmdArgs {
     private Cargo tipoCargo;
@@ -11,5 +15,21 @@ public class CmdArgs {
         this.caminhoArquivoCandidatos = caminhoArquivoCandidatos;
         this.caminhoArquivoVotacao = caminhoArquivoVotacao;
         this.data = data;
+    }
+
+    public Cargo getTipoCargo() {
+        return tipoCargo;
+    }
+
+    public String getCaminhoArquivoCandidatos() {
+        return caminhoArquivoCandidatos;
+    }
+
+    public String getCaminhoArquivoVotacao() {
+        return caminhoArquivoVotacao;
+    }
+
+    public LocalDate getData() {
+        return data;
     }
 }
