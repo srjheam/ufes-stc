@@ -4,7 +4,7 @@
 	<!-- Propriedades do build. -->
 	<property name="src" location="src" />
 	<property name="bin" location="bin" />
-	<property name="mainClass" value="console.App" />
+	<property name="mainClass" value="com.srjheamtucozz.ufes.poo.t1.console.App" />
 
 	<!-- Inicialização. -->
 	<target name="init" description="Inicializa as estruturas necessárias.">
