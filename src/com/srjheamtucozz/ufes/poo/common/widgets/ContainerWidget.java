@@ -6,15 +6,16 @@ public class ContainerWidget extends Widget {
     private int paddingTop;
     private int paddingBottom;
 
-    public ContainerWidget(Widget content) {
-        this(content, 0);
+    public ContainerWidget(Widget children) {
+        this(children, 0);
     }
 
-    public ContainerWidget(Widget content, int padding) {
-        this(content, padding, padding);
+    public ContainerWidget(Widget children, int padding) {
+        this(children, padding, padding);
     }
 
-    public ContainerWidget(Widget content, int paddingTop, int paddingBottom) {
+    public ContainerWidget(Widget children, int paddingTop, int paddingBottom) {
+        this.children = children;
         this.paddingTop = paddingTop;
         this.paddingBottom = paddingBottom;
     }
