@@ -9,45 +9,51 @@ public class Candidato {
     private boolean deferido;
     private String numero;
     private String nomeUrna;
-    private Partido partido;
+    private String numeroPartido;
+    private String numeroFederacao;
     private LocalDate dataNascimento;
     private boolean sexo; // internamente o sexo sim é masculino e não é feminino
 
-    public Candidato(Cargo cargo, boolean deferido, String numero, String nomeUrna, Partido partido, LocalDate dataNascimento, boolean sexo) {
+    public Candidato(Cargo cargo, boolean deferido, String numero, String nomeUrna, String numeroPartido, String numeroFederacao, LocalDate dataNascimento, boolean sexo) {
         this.cargo = cargo;
         this.deferido = deferido;
         this.numero = numero;
         this.nomeUrna = nomeUrna;
-        this.partido = partido;
+        this.numeroPartido = numeroPartido;
+        this.numeroFederacao = numeroFederacao;
         this.dataNascimento = dataNascimento;
         this.sexo = sexo;
     }
 
     public Cargo getCargo() {
-        return cargo;
+        return this.cargo;
     }
 
     public boolean isDeferido() {
-        return deferido;
+        return this.deferido;
     }
 
     public String getNumero() {
-        return numero;
+        return this.numero;
     }
 
     public String getNomeUrna() {
-        return nomeUrna;
+        return this.nomeUrna;
     }
 
-    public Partido getPartido() {
-        return partido;
+    public String getNumeroPartido() {
+        return this.numeroPartido;
+    }
+
+    public String getNumeroFederacao() {
+        return this.numeroFederacao;
     }
 
     public LocalDate getDataNascimento() {
-        return dataNascimento;
+        return this.dataNascimento;
     }
 
     public boolean isSexo() {
-        return sexo;
+        return this.sexo;
     }    
 }
