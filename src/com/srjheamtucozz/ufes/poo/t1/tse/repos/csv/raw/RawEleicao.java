@@ -1,6 +1,7 @@
 package com.srjheamtucozz.ufes.poo.t1.tse.repos.csv.raw;
 
 import java.util.List;
+import java.util.LinkedList;
 
 public class RawEleicao {
     List<RawCandidato> candidatos;
@@ -12,10 +13,10 @@ public class RawEleicao {
     }
 
     public List<RawCandidato> getCandidatos() {
-        return candidatos;
+        return new LinkedList<>(candidatos);
     }
 
     public List<RawVotacao> getVotacoes() {
-        return votacoes;
+        return new LinkedList<>(votacoes);
     }
 }

@@ -1,6 +1,7 @@
 package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
 import java.util.NavigableSet;
+import java.util.TreeSet;
 
 public class LegendaVotacao {
     private Partido legenda;
@@ -27,7 +28,7 @@ public class LegendaVotacao {
     }
 
     public NavigableSet<CandidatoVotacao> getCandidatos() {
-        return candidatos;
+        return new TreeSet<>(candidatos);
     }
 
     public void incNumeroVotosLegenda(int value) {

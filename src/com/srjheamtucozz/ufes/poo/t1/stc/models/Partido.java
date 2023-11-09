@@ -34,6 +34,6 @@ public class Partido {
     }
 
     public Map<String, Candidato> getCandidatos() {
-        return candidatos;
+        return new HashMap<>(candidatos);
     }
 }

@@ -24,15 +24,15 @@ public class Eleicao {
     }
 
     public Map<String, Federacao> getFederacoes() {
-        return federacoes;
+        return new HashMap<>(federacoes);
     }
 
     public Map<String, Partido> getPartidos() {
-        return partidos;
+        return new HashMap<>(partidos);
     }
 
     public Map<String, Candidato> getCandidatos() {
-        return candidatos;
+        return new HashMap<>(candidatos);
     }
 
     public Votacao getVotacao() {

@@ -1,5 +1,6 @@
 package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
 
@@ -23,9 +24,9 @@ public class Votacao {
     }
 
     public Map<String, LegendaVotacao> getLegendas() {
-        return legendas;
+        return new HashMap<>(legendas);
     }
     public Map<String, CandidatoVotacao> getCandidatos() {
-        return candidatos;
+        return new HashMap<>(candidatos);
     }    
 }

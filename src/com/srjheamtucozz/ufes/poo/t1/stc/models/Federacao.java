@@ -17,6 +17,6 @@ public class Federacao {
     }
 
     public Map<String, Partido> getPartidos() {
-        return partidos;
+        return new HashMap<>(partidos);
     }
 }
