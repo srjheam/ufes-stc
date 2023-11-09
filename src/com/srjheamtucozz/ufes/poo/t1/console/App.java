@@ -11,6 +11,9 @@ import com.srjheamtucozz.ufes.poo.common.widgets.Text;
 import com.srjheamtucozz.ufes.poo.t1.console.entities.CmdArgs;
 import com.srjheamtucozz.ufes.poo.t1.console.parsers.CmdArgsParser;
 import com.srjheamtucozz.ufes.poo.t1.console.validators.CmdArgsValidator;
+import com.srjheamtucozz.ufes.poo.t1.stc.models.Eleicao;
+import com.srjheamtucozz.ufes.poo.t1.stc.models.EleicaoStats;
+import com.srjheamtucozz.ufes.poo.t1.stc.util.Mapper;
 import com.srjheamtucozz.ufes.poo.t1.tse.repos.csv.raw.RawEleicao;
 import com.srjheamtucozz.ufes.poo.t1.tse.repos.csv.readers.TseReader;
 
@@ -52,5 +55,12 @@ public class App {
                 cmdArgs.getCaminhoArquivoVotacao());
 
         // TODO: Computar tudo que tem que computar com esses dados e imprimir na tela
+
+        Eleicao eleicao = Mapper.fromTse(rawEleicao);
+
+        EleicaoStats stats = new EleicaoStats(eleicao);
+
+        stats.print();
+
     }
 }
