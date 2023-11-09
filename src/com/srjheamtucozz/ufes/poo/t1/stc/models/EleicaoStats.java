@@ -1,11 +1,21 @@
 package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 public class EleicaoStats {
     private Eleicao eleicao;
     private int numeroVagas;
     private List<Candidato> candidatosOrdenados;
+    private List<Candidato> candidatosEleitos;
+    private Map<Partido, Candidato> partidos;
+    private Map<Integer, Integer> eleitosFaixaEtaria;
+    private Map<Integer, Integer> eleitosSexo;
+    private int totalVotos;
+    private int totalVotosNominais;
+    private int totalVotosLegenda;
 
 
         // Seu programa deve ler os dados dos dois arquivos descritos acima (cujos nomes serão passados pela linha de
@@ -31,11 +41,100 @@ public class EleicaoStats {
 
     public void compute() {
     
-        // TODO: Ordenar o vetor com os candidatos mais votados
-        // Esse vetor tem que ter posição, nome, nome do partido e quantidade de votos.
+        Candidato[] candidatos = this.eleicao.getCandidatos().values().toArray();
+        // Favor ordenar o vetor aqui
+        candidatosEleitos = computeCandidatosEleitos(candidatos);
+        partidos = computePartidos(candidatos);
+        eleitosFaixaEtaria = computeFaixaEtaria(candidatos);
+        eleitosSexo = computeSexo(candidatos);
+        totalVotos = computeVotos(candidatos);
+        totalVotosNominais = computeNominais(candidatos);
+        totalVotosLegenda = computeLegenda(candidatos);
 
-        // TODO: Computar quem, independente da quantidade de votos, foi eleito
+    }
 
+    private List<Candidato> computeCandidatosEleitos(Candidato[] candidatos){
+        
+        List<Candidato> eleitos = new LinkedList<>();
+
+        for(Candidato c : candidatos){
+            if(c.foiEleito()){
+                eleitos.add(c);
+            }
+        }
+        return eleitos;
+    }
+
+    private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
+        Map<Partido, Candidato> partidos = new HashMap<>();
+        
+        for(Candidato c : candidatos){
+            partidos.put(c.getNumeroPartido(), c);
+        }
+
+        return partidos;
+    }
+
+    private void incrementMap(Map map, int idx){
+        int value = map.get(idx);
+        map.replace(idx, value + 1);
+    }
+
+    private Map<Integer, Integer> computeFaixaEtaria(Candidato[] candidatos){
+        Map<Integer, Integer> faixas = new HashMap<>();
+        for(Candidato c : candidatos){
+            if(getIdade(c.getDataNascimento()) < 30)
+                incrementMap(faixas, 0);
+            else if(getIdade(c.getDataNascimento()) < 40)
+                incrementMap(faixas, 1);
+            else if(getIdade(c.getDataNascimento()) < 50)
+                incrementMap(faixas, 2);
+            else if(getIdade(c.getDataNascimento()) < 60)
+                incrementMap(faixas, 3);
+            else
+                incrementMap(faixas, 4);
+        }
+
+        return faixas;
+    }
+
+    private Map<Integer, Integer> computeSexo(Candidato[] candidatos){
+        Map<Integer, Integer> sexos = new HashMap<>();
+        for(Candidato c : candidatos){
+            if(c.isSexo())
+                incrementMap(sexos, 1);
+            else
+                incrementMap(sexos, 0);
+        }
+
+        return sexos;
+    }
+
+    private int computeVotos(Candidato[] candidatos){
+        int votos = 0;
+        for(Candidato c : candidatos){
+            votos += c.quantosVotos;
+        }
+
+        return votos;
+    }
+
+    private int computeNominais(Candidato[] candidatos){
+        int votos = 0;
+        for(Candidato c : candidatos){
+            votos += c.quatosVotosNominais;
+        }
+
+        return votos;
+    }
+
+    private int computeLegenda(Candidato[] candidatos){
+        int votos = 0;
+        for(Candidato c : candidatos){
+            votos += c.quatosVotosLegenda;
+        }
+
+        return votos;
     }
 
     public void print() {
