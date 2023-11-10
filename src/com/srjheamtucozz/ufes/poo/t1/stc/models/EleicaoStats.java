@@ -1,22 +1,25 @@
 package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
+
+import com.srjheamtucozz.ufes.poo.t1.stc.enums.Cargo;
 
 public class EleicaoStats {
     private Eleicao eleicao;
+    private Cargo cargo;
+
     private int numeroVagas;
-    private List<Candidato> candidatosOrdenados;
-    private List<Candidato> candidatosEleitos;
-    private Map<Partido, Candidato> partidos;
+    private List<CandidatoVotacao> candidatosEleitos;
+
     private Map<Integer, Integer> eleitosFaixaEtaria;
     private Map<Integer, Integer> eleitosSexo;
-    private int totalVotos;
-    private int totalVotosNominais;
-    private int totalVotosLegenda;
-
 
         // Seu programa deve ler os dados dos dois arquivos descritos acima (cujos nomes serão passados pela linha de
         // comando) e gerar diversos relatórios na saída padrão:
@@ -35,34 +38,26 @@ public class EleicaoStats {
         // 9. Distribuição de eleitos por sexo;
         // 10. Total de votos, total de votos nominais e total de votos de legenda.
 
-    public EleicaoStats(Eleicao eleicao) {
+    public EleicaoStats(Eleicao eleicao, Cargo cargo) {
         this.eleicao = eleicao;
+        this.cargo = cargo;
+
+        this.compute();
     }
 
-    public void compute() {
-    
-        Candidato[] candidatos = this.eleicao.getCandidatos().values().toArray();
-        // Favor ordenar o vetor aqui
-        candidatosEleitos = computeCandidatosEleitos(candidatos);
-        partidos = computePartidos(candidatos);
-        eleitosFaixaEtaria = computeFaixaEtaria(candidatos);
-        eleitosSexo = computeSexo(candidatos);
-        totalVotos = computeVotos(candidatos);
-        totalVotosNominais = computeNominais(candidatos);
-        totalVotosLegenda = computeLegenda(candidatos);
+    private void compute() {
+        this.candidatosEleitos = computeCandidatosEleitos(this.eleicao);
+        this.numeroVagas = candidatosEleitos.size();
 
+        this.eleitosFaixaEtaria = computeFaixaEtaria(this.eleicao);
+        this.eleitosSexo = computeSexo(this.eleicao);
     }
 
-    private List<Candidato> computeCandidatosEleitos(Candidato[] candidatos){
-        
-        List<Candidato> eleitos = new LinkedList<>();
-
-        for(Candidato c : candidatos){
-            if(c.foiEleito()){
-                eleitos.add(c);
-            }
-        }
-        return eleitos;
+    private static List<CandidatoVotacao> computeCandidatosEleitos(Eleicao eleicao){
+        return eleicao.getVotacao().getCandidatosSorted()
+            .stream()
+            .filter(CandidatoVotacao::isEleito)
+            .collect(Collectors.toList());
     }
 
     private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
@@ -151,18 +146,81 @@ public class EleicaoStats {
         printTotalVotos();
 
     }
+    
+    private static String linhaToString(int i, String content) {
+        return i
+            + " - "
+            + content;
+    }
+
+    private String candidatoToString(CandidatoVotacao candidatoVotacao) {
+        return (candidatoVotacao.isDestinacaoLegenda() ? "*" : "")
+                + candidatoVotacao.getCandidato().getNomeUrna()
+                + " ("
+                + this.eleicao.getPartidos().get(candidatoVotacao.getCandidato().getNumeroPartido()).getSigla()
+                + ", "
+                + candidatoVotacao.getNumeroVotos()
+                + " voto"
+                + (candidatoVotacao.getNumeroVotos() > 1 ? "s" : "")
+                + ")";
+    }
+
+    private static String partidoToString(LegendaVotacao legendaVotacao) {
+        return legendaVotacao.getLegenda().getSigla()
+                + " - "
+                + legendaVotacao.getLegenda().getNumero()
+                + ", "
+                + legendaVotacao.getNumeroVotosTotais()
+                + " voto"
+                + (legendaVotacao.getNumeroVotosTotais() > 1 ? "s" : "")
+                + " ("
+                + legendaVotacao.getNumeroVotosNominais()
+                + " "
+                + (legendaVotacao.getNumeroVotosNominais() > 1 ? "nominais" : "nominal")
+                + " e "
+                + legendaVotacao.getNumeroVotosLegenda()
+                + " de legenda"
+                + "), "
+                + legendaVotacao.getNumeroCandidatosEleitos()
+                + " candidato"
+                + (legendaVotacao.getNumeroCandidatosEleitos() > 1 ? "s" : "")
+                + " eleito"
+                + (legendaVotacao.getNumeroCandidatosEleitos() > 1 ? "s" : "");
+    }
+
+    private static String partidoPrimeiroUltimoToString(LegendaVotacao legendaVotacao) {
+        return legendaVotacao.getLegenda().getSigla()
+                + " - "
+                + legendaVotacao.getLegenda().getNumero()
+                + ", "
+                + legendaVotacao.getCandidatos().first().getCandidato().getNomeUrna()
+                + " ("
+                + legendaVotacao.getCandidatos().first().getCandidato().getNumero()
+                + ", "
+                + legendaVotacao.getCandidatos().first().getNumeroVotos()
+                + " voto"
+                + (legendaVotacao.getCandidatos().first().getNumeroVotos() > 1 ? "s" : "")
+                + ") / "
+                + legendaVotacao.getCandidatos().last().getCandidato().getNomeUrna()
+                + " ("
+                + legendaVotacao.getCandidatos().last().getCandidato().getNumero()
+                + ", "
+                + legendaVotacao.getCandidatos().last().getNumeroVotos()
+                + " voto"
+                + (legendaVotacao.getCandidatos().last().getNumeroVotos() > 1 ? "s" : "")
+                + ")";
+    }
 
     private void printNumeroVagas() {
         System.out.println("Numero de vagas: " + numeroVagas);
+        System.out.println();
     }
 
     private void printCandidatosEleitos() {
-        //TODO: trocar para diferentes tipos de eleição
-        // Exemplo: "Deputados estatuais eleitos:" ou "Deputados federais eleitos:"
-        System.out.println("Candidatos eleitos:");
+        System.out.println("Deputados " + (this.cargo == Cargo.DEPUTADO_ESTADUAL ? "estaduais" : "federais") + " eleitos:");
         int i = 1;
-        for (Candidato candidato : candidatosEleitos) {
-            System.out.println(i++ + " - " candidato.getNomeUrna() + " (" + candidato.getPartido() + ", " + candidato.getQtVotos + " votos)");
+        for (CandidatoVotacao candidatoVotacao : this.candidatosEleitos) {
+            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));
         }
     }
 
@@ -170,43 +228,76 @@ public class EleicaoStats {
 
         System.out.println("Candidatos mais votados (em ordem decrescente de votação e respeitando número de vagas):");
         int i = 1;
-        for (Candidato candidato : candidatosMaisVotados) {
-            System.out.println(i++ + " - " candidato.getNomeUrna() + " (" + candidato.getPartido() + ", " + candidato.getQtVotos + " votos)");
+        for (CandidatoVotacao candidatoVotacao : this.eleicao.getVotacao().getCandidatosSorted()
+                                                    .stream()
+                                                    .limit(this.numeroVagas)
+                                                    .collect(Collectors.toList())) {
+            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));
         }
     }
 
     private void printCandidatosNaoEleitos() {
         System.out.println("Teriam sido eleitos se a votação fosse majoritária, e não foram eleitos:");
         System.out.println("(com sua posição no ranking de mais votados)");
-        //TODO: imprimir antes a posição dele no array de mais votados
-        for (Candidato candidato : candidatosNaoEleitos) {
-            System.out.println(candidato.getNomeUrna() + " (" + candidato.getPartido() + ", " + candidato.getQtVotos + " votos)");
+        
+        int i = 1;
+        for (CandidatoVotacao candidatoVotacao : this.eleicao.getVotacao().getCandidatosSorted()
+                                                    .stream()
+                                                    .limit(this.numeroVagas)
+                                                    .collect(Collectors.toList())) {
+            if (candidatoVotacao.isEleito())
+                continue;
+
+            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));            
         }
     }
 
     private void printCandidatosEleitosSistemaProporcional() {
         System.out.println("Eleitos, que se beneficiaram do sistema proporcional:");
         System.out.println("(com sua posição no ranking de mais votados)");
-        for(Candidato candidato : candidatosEleitosSistemaProporcional) {
-            System.out.println(candidato.getNomeUrna() + " (" + candidato.getPartido() + ", " + candidato.getQtVotos + " votos)");
+        
+        int i = 1;
+        for (CandidatoVotacao candidatoVotacao : this.eleicao.getVotacao().getCandidatosSorted()
+                                                    .stream()
+                                                    .skip(this.numeroVagas)
+                                                    .collect(Collectors.toList())) {
+            if (!candidatoVotacao.isEleito())
+                continue;
+
+            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));            
         }
     }
 
     private void printVotacaoPartidos(){
         System.out.println("Votação dos partidos e número de candidatos eleitos:");
-        // TODO: Tem que manter conta de quantos são nominais e quantos sao de legenda.
-        for(Partido partido : partidos) {
-            System.out.println(partido.getNome() + " - " + partido.getNumero() + ", " + partido.getVotosNominais() + " votos (" + partido.getQtEleitos() + " candidatos eleitos)");
+        int i = 1;
+        for(LegendaVotacao legendaVotacao : this.eleicao.getVotacao().getLegendasSorted()) {
+            System.out.println(linhaToString(i++, partidoToString(legendaVotacao)));
         }
     }
 
     private void printPrimeiroUltimoColocadoPartido() {
         System.out.println("Primeiro e último colocados de cada partido:");
-        for(Partido partido : partidosComCandidatosEleitos) {
-            System.out.println(partido.getNome() + " - " + partido.getNumero() + ", " +
-                                partido.getPrimeiroColocado().getNomeUrna() + " (" + partido.getPrimeiroColocado().getNumero() + ", " + partido.getPrimeiroColocado().getQtVotos() + " votos)" + " / " 
-                                partido.getUltimoColocado().getNomeUrna() +  " (" + partido.getUltimoColocado().getNumero() + ", " + partido.getUltimoColocado().getQtVotos() + " votos)");
-                            
+
+        NavigableSet<LegendaVotacao> partidosPrimeiroUltimo = new TreeSet<LegendaVotacao>(new Comparator<LegendaVotacao>() {
+            @Override
+            public int compare(LegendaVotacao p1, LegendaVotacao p2) {
+                int r = p2.getCandidatos().first().getNumeroVotos() - p1.getCandidatos().first().getNumeroVotos();
+                if (r != 0)
+                    return r;
+
+                int r2 = p2.getCandidatos().first().getCandidato().getIdade() - p1.getCandidatos().first().getCandidato().getIdade();
+                if (r2 != 0)
+                    return r2;
+
+                return Integer.valueOf(p1.getLegenda().getNumero()) - Integer.valueOf(p2.getLegenda().getNumero());
+            }
+        });
+        partidosPrimeiroUltimo.addAll(this.eleicao.getVotacao().getLegendasSorted());
+
+        int i = 1;
+        for(LegendaVotacao partido : partidosPrimeiroUltimo) {
+            System.out.println(linhaToString(i++, partidoPrimeiroUltimoToString(partido)));
         }
     }
 
@@ -230,7 +321,4 @@ public class EleicaoStats {
         System.out.println("Total de votos nominais: " + totalVotosNominais);
         System.out.println("Total de votos de legenda: " + totalVotosLegenda);
     }
-
-
-
 }

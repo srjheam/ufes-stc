@@ -56,9 +56,9 @@ public class App {
 
         // TODO: Computar tudo que tem que computar com esses dados e imprimir na tela
 
-        Eleicao eleicao = Mapper.fromTse(rawEleicao);
+        Eleicao eleicao = Mapper.fromTse(rawEleicao, cmdArgs.getData());
 
-        EleicaoStats stats = new EleicaoStats(eleicao);
+        EleicaoStats stats = new EleicaoStats(eleicao, cmdArgs.getTipoCargo());
 
         stats.print();
 

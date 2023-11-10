@@ -5,6 +5,9 @@ import java.util.TreeSet;
 
 public class LegendaVotacao {
     private Partido legenda;
+    private int numeroCandidatosEleitos;
+    private int numeroVotosTotais;
+    private int numeroVotosNominais;
     private int numeroVotosLegenda;
     private NavigableSet<CandidatoVotacao> candidatos;
     
@@ -13,10 +16,13 @@ public class LegendaVotacao {
         this.candidatos = candidatos;
     }
 
-    public LegendaVotacao(Partido legenda, int numeroVotosLegenda, NavigableSet<CandidatoVotacao> candidatos) {
+    public LegendaVotacao(Partido legenda, int numeroVotosLegenda, int numeroVotosNominais, NavigableSet<CandidatoVotacao> candidatos) {
         this(legenda, candidatos);
 
         this.numeroVotosLegenda = numeroVotosLegenda;
+        this.numeroVotosNominais = numeroVotosNominais;
+        this.numeroVotosTotais = numeroVotosLegenda + numeroVotosNominais;
+        this.numeroCandidatosEleitos = (int) candidatos.stream().filter(CandidatoVotacao::isEleito).count();
     }
 
     public Partido getLegenda() {
@@ -31,7 +37,15 @@ public class LegendaVotacao {
         return new TreeSet<>(candidatos);
     }
 
-    public void incNumeroVotosLegenda(int value) {
-        this.numeroVotosLegenda += value;
+    public int getNumeroCandidatosEleitos() {
+        return numeroCandidatosEleitos;
+    }
+
+    public int getNumeroVotosTotais() {
+        return numeroVotosTotais;
+    }
+
+    public int getNumeroVotosNominais() {
+        return numeroVotosNominais;
     }
 }

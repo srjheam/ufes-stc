@@ -3,6 +3,7 @@ package com.srjheamtucozz.ufes.poo.t1.stc.models;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.TreeSet;
 
 public class Votacao {
     Map<String, LegendaVotacao> legendas;
@@ -26,7 +27,16 @@ public class Votacao {
     public Map<String, LegendaVotacao> getLegendas() {
         return new HashMap<>(legendas);
     }
+
     public Map<String, CandidatoVotacao> getCandidatos() {
         return new HashMap<>(candidatos);
-    }    
+    }
+
+    public NavigableSet<LegendaVotacao> getLegendasSorted() {
+        return new TreeSet<>(legendasSorted);
+    }
+
+    public NavigableSet<CandidatoVotacao> getCandidatosSorted() {
+        return new TreeSet<>(candidatosSorted);
+    }
 }

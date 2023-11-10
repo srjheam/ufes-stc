@@ -3,6 +3,8 @@ package com.srjheamtucozz.ufes.poo.t1.stc.util;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.time.temporal.ChronoUnit;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +23,8 @@ import com.srjheamtucozz.ufes.poo.t1.tse.repos.csv.raw.RawEleicao;
 import com.srjheamtucozz.ufes.poo.t1.tse.repos.csv.raw.RawVotacao;
 
 public class Mapper {
-   public static Eleicao fromTse(RawEleicao raw) {
-      Eleicao mapEleicao = mapEleicao(raw.getCandidatos());
+   public static Eleicao fromTse(RawEleicao raw, LocalDate dataRelatorio) {
+      Eleicao mapEleicao = mapEleicao(raw.getCandidatos(), dataRelatorio);
       Votacao mapVotacao = mapVotacao(raw.getVotacoes(), mapEleicao);
 
       Eleicao eleicao = new Eleicao(mapEleicao.getFederacoes(), mapEleicao.getPartidos(), mapEleicao.getCandidatos(),
@@ -31,7 +33,7 @@ public class Mapper {
       return eleicao;
    }
 
-   private static Eleicao mapEleicao(List<RawCandidato> raw) {
+   private static Eleicao mapEleicao(List<RawCandidato> raw, LocalDate dataRelatorio) {
       Map<String, CandidatoVotacao> candidatosVotacao = new HashMap<>();
       Map<String, Candidato> candidatos = new HashMap<>();
 
@@ -41,7 +43,7 @@ public class Mapper {
       Map<String, Map<String, Partido>> mapFederacoesPartidos = new HashMap<>();
 
       for (var candidatoRaw : raw) {
-         var candidato = fromTse(candidatoRaw);
+         var candidato = fromTse(candidatoRaw, dataRelatorio);
          candidatos.put(candidatoRaw.getNrCandidato(), candidato);
          candidatosVotacao.put(candidatoRaw.getNrCandidato(),
                new CandidatoVotacao(
@@ -100,6 +102,7 @@ public class Mapper {
    private static Votacao mapVotacao(List<RawVotacao> raw, Eleicao mapEleicao) {
       var candidatosVotacao = mapEleicao.getVotacao().getCandidatos();
       var legendasVotos = new HashMap<String, Integer>();
+      var legendasNominais = new HashMap<String, Integer>();
 
       for (var votacaoRaw : raw) {
          var nr = votacaoRaw.getNrVotavel();
@@ -114,22 +117,57 @@ public class Mapper {
 
          var candidatoVotacao = candidatosVotacao.get(nr);
          candidatoVotacao.incNumeroVotos(Integer.parseInt(votacaoRaw.getQtVotos()));
+
+         if (!candidatoVotacao.isDestinacaoLegenda()) {
+            int votos = legendasNominais.getOrDefault(candidatoVotacao.getCandidato().getNumeroPartido(), 0);
+            legendasNominais.put(candidatoVotacao.getCandidato().getNumeroPartido(),
+                  votos + Integer.parseInt(votacaoRaw.getQtVotos()));
+         }
       }
 
-      // TODO: adicionar comparator
-      var candidatosSorted = new TreeSet<CandidatoVotacao>(candidatosVotacao.values());
+      var candidatosSorted = new TreeSet<CandidatoVotacao>(new Comparator<CandidatoVotacao>() {
+         @Override
+         public int compare(CandidatoVotacao s1, CandidatoVotacao s2) {
+            int r = s2.getNumeroVotos() - s1.getNumeroVotos();
+            if (r == 0)
+               return s2.getCandidato().getIdade() - s1.getCandidato().getIdade();
+            
+            return r;
+         }
+      });
+      candidatosSorted.addAll(candidatosVotacao.values());
 
       var legendasVotacao = new HashMap<String, LegendaVotacao>();
-      // TODO: adicionar comparator
-      var legendasSorted = new TreeSet<LegendaVotacao>();
+
+      var legendasSorted = new TreeSet<LegendaVotacao>(new Comparator<LegendaVotacao>() {
+         @Override
+         public int compare(LegendaVotacao s1, LegendaVotacao s2) {
+            int r = s2.getNumeroVotosTotais() - s1.getNumeroVotosTotais();
+            if (r == 0)
+               return Integer.valueOf(s1.getLegenda().getNumero()) - Integer.valueOf(s2.getLegenda().getNumero());
+
+            return r;
+         }
+      });
       for (Partido partido : mapEleicao.getPartidos().values()) {
-         // TODO: adicionar comparator
-         var candidatos = new TreeSet<CandidatoVotacao>();
+         var candidatos = new TreeSet<CandidatoVotacao>(new Comparator<CandidatoVotacao>() {
+            @Override
+            public int compare(CandidatoVotacao s1, CandidatoVotacao s2) {
+               int r = s2.getNumeroVotos() - s1.getNumeroVotos();
+               if (r == 0)
+                  return s2.getCandidato().getIdade() - s1.getCandidato().getIdade();
+               
+               return r;
+            }
+            });
          for (Candidato candidato : partido.getCandidatos().values()) {
             candidatos.add(candidatosVotacao.get(candidato.getNumero()));
          }
 
-         var legenda = new LegendaVotacao(partido, legendasVotos.getOrDefault(partido.getNumero(), 0), candidatos);
+         var legenda = new LegendaVotacao(partido,
+                                          legendasVotos.getOrDefault(partido.getNumero(), 0),
+                                          legendasNominais.getOrDefault(partido.getNumero(), 0),
+                                          candidatos);
          legendasVotacao.put(partido.getNumero(), legenda);
 
          legendasSorted.add(legenda);
@@ -139,7 +177,7 @@ public class Mapper {
       return votacao;
    }
 
-   private static Candidato fromTse(RawCandidato raw) {
+   private static Candidato fromTse(RawCandidato raw, LocalDate dataRelatorio) {
       Cargo cargo = parseCargoFromTse(raw.getCdCargo());
       boolean deferido = parseDeferidoFromTse(raw.getCdSituacaoCandidatoTot());
       String numero = raw.getNrCandidato();
@@ -149,7 +187,7 @@ public class Mapper {
       LocalDate dataNascimento = parseDataFromTse(raw.getDtNascimento());
       boolean sexo = parseSexoFromTse(raw.getCdGenero());
 
-      return new Candidato(cargo, deferido, numero, nomeUrna, numeroPartido, numeroFederacao, dataNascimento, sexo);
+      return new Candidato(cargo, deferido, numero, nomeUrna, numeroPartido, numeroFederacao, dataNascimento, (int)ChronoUnit.YEARS.between(dataNascimento, dataRelatorio), sexo);
    }
 
    private static LocalDate parseDataFromTse(String data) {

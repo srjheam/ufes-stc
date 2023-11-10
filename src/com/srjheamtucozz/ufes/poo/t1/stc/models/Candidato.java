@@ -12,9 +12,10 @@ public class Candidato {
     private String numeroPartido;
     private String numeroFederacao;
     private LocalDate dataNascimento;
+    private int idade;
     private boolean sexo; // internamente o sexo sim é masculino e não é feminino
 
-    public Candidato(Cargo cargo, boolean deferido, String numero, String nomeUrna, String numeroPartido, String numeroFederacao, LocalDate dataNascimento, boolean sexo) {
+    public Candidato(Cargo cargo, boolean deferido, String numero, String nomeUrna, String numeroPartido, String numeroFederacao, LocalDate dataNascimento, int idade, boolean sexo) {
         this.cargo = cargo;
         this.deferido = deferido;
         this.numero = numero;
@@ -22,6 +23,7 @@ public class Candidato {
         this.numeroPartido = numeroPartido;
         this.numeroFederacao = numeroFederacao;
         this.dataNascimento = dataNascimento;
+        this.idade = idade;
         this.sexo = sexo;
     }
 
@@ -51,6 +53,10 @@ public class Candidato {
 
     public LocalDate getDataNascimento() {
         return this.dataNascimento;
+    }
+
+    public int getIdade() {
+        return this.idade;
     }
 
     public boolean isSexo() {
