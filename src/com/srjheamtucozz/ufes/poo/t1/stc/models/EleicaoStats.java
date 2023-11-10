@@ -2,7 +2,6 @@ package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
@@ -60,31 +59,30 @@ public class EleicaoStats {
             .collect(Collectors.toList());
     }
 
-    private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
-        Map<Partido, Candidato> partidos = new HashMap<>();
+    // private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
+    //     Map<Partido, Candidato> partidos = new HashMap<>();
         
-        for(Candidato c : candidatos){
-            partidos.put(c.getNumeroPartido(), c);
-        }
+    //     for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
+    //         partidos.put(this.eleicao.getPartidos().get(c.getCandidato().getNumeroPartido()), c.getCandidato());
+    //     }
 
-        return partidos;
+    //     return partidos;
+    // }
+
+    private void incrementMap(Map<Integer, Integer> map, int idx){
+        map.merge((Integer)idx, (Integer)1, (a, b) -> a + 1); // map.put(idx, map.get(idx) + 1);
     }
 
-    private void incrementMap(Map map, int idx){
-        int value = map.get(idx);
-        map.replace(idx, value + 1);
-    }
-
-    private Map<Integer, Integer> computeFaixaEtaria(Candidato[] candidatos){
+    private Map<Integer, Integer> computeFaixaEtaria(Eleicao eleicao){
         Map<Integer, Integer> faixas = new HashMap<>();
-        for(Candidato c : candidatos){
-            if(getIdade(c.getDataNascimento()) < 30)
+        for(Candidato c : this.eleicao.getCandidatos().values()){
+            if(c.getIdade() < 30)
                 incrementMap(faixas, 0);
-            else if(getIdade(c.getDataNascimento()) < 40)
+            else if(c.getIdade() < 40)
                 incrementMap(faixas, 1);
-            else if(getIdade(c.getDataNascimento()) < 50)
+            else if(c.getIdade() < 50)
                 incrementMap(faixas, 2);
-            else if(getIdade(c.getDataNascimento()) < 60)
+            else if(c.getIdade() < 60)
                 incrementMap(faixas, 3);
             else
                 incrementMap(faixas, 4);
@@ -93,9 +91,9 @@ public class EleicaoStats {
         return faixas;
     }
 
-    private Map<Integer, Integer> computeSexo(Candidato[] candidatos){
+    private Map<Integer, Integer> computeSexo(Eleicao eleicao){
         Map<Integer, Integer> sexos = new HashMap<>();
-        for(Candidato c : candidatos){
+        for(Candidato c : this.eleicao.getCandidatos().values()){
             if(c.isSexo())
                 incrementMap(sexos, 1);
             else
@@ -105,28 +103,28 @@ public class EleicaoStats {
         return sexos;
     }
 
-    private int computeVotos(Candidato[] candidatos){
+    private int computeVotos(){
         int votos = 0;
-        for(Candidato c : candidatos){
-            votos += c.quantosVotos;
+        for (CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()) {
+            votos += c.getNumeroVotos();
         }
 
         return votos;
     }
 
-    private int computeNominais(Candidato[] candidatos){
+    private int computeNominais(){
         int votos = 0;
-        for(Candidato c : candidatos){
-            votos += c.quatosVotosNominais;
+        for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
+            votos += c.getNumeroVotos();
         }
 
         return votos;
     }
 
-    private int computeLegenda(Candidato[] candidatos){
+    private int computeLegenda(){
         int votos = 0;
-        for(Candidato c : candidatos){
-            votos += c.quatosVotosLegenda;
+        for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
+            votos += c.getNumeroVotos();
         }
 
         return votos;
@@ -317,8 +315,8 @@ public class EleicaoStats {
     }
 
     private void printTotalVotos() {
-        System.out.println("Total de votos válidos: " + totalVotos);
-        System.out.println("Total de votos nominais: " + totalVotosNominais);
-        System.out.println("Total de votos de legenda: " + totalVotosLegenda);
+        System.out.println("Total de votos válidos: " + computeVotos());
+        System.out.println("Total de votos nominais: " + computeNominais());
+        System.out.println("Total de votos de legenda: " + computeLegenda());
     }
 }
