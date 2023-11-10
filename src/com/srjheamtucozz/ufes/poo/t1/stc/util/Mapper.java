@@ -75,7 +75,6 @@ public class Mapper {
       }
 
       var partidos = new HashMap<String, Partido>();
-      int i = 0;
       for (var partidoCandidatos : mapPartidosCandidatos.entrySet()) {
          var partido = mapPartidos.get(partidoCandidatos.getKey());
 
@@ -85,7 +84,6 @@ public class Mapper {
       }
 
       var federacoes = new HashMap<String, Federacao>();
-      i = 0;
       for (var federacaoPartidos : mapFederacoesPartidos.entrySet()) {
          var pp = new HashMap<String, Partido>();
          for (var partido : federacaoPartidos.getValue().entrySet()) {
