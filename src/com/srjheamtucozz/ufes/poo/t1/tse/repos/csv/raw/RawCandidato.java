@@ -9,7 +9,7 @@ public class RawCandidato {
     private String sgPartido;
     private String nrFederacao;
     private String dtNascimento;
-    private String cdSirTotTurno;
+    private String cdSitTotTurno;
     private String cdGenero;
     private String nmTipoDestinacaoVotos;
     
@@ -24,7 +24,7 @@ public class RawCandidato {
         this.sgPartido = sgPartido;
         this.nrFederacao = nrFederacao;
         this.dtNascimento = dtNascimento;
-        this.cdSirTotTurno = cdSirTotTurno;
+        this.cdSitTotTurno = cdSirTotTurno;
         this.cdGenero = cdGenero;
         this.nmTipoDestinacaoVotos = nmTipoDestinacaoVotos;
     }
@@ -61,8 +61,8 @@ public class RawCandidato {
         return dtNascimento;
     }
 
-    public String getCdSirTotTurno() {
-        return cdSirTotTurno;
+    public String getCdSitTotTurno() {
+        return cdSitTotTurno;
     }
 
     public String getCdGenero() {

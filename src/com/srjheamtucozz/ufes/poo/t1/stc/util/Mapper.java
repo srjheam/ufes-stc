@@ -47,7 +47,7 @@ public class Mapper {
          candidatos.put(candidatoRaw.getNrCandidato(), candidato);
          candidatosVotacao.put(candidatoRaw.getNrCandidato(),
                new CandidatoVotacao(
-                     parseEleitoFromTse(candidatoRaw.getCdSirTotTurno()),
+                     parseEleitoFromTse(candidatoRaw.getCdSitTotTurno()),
                      parseDestinacaoFromTse(candidatoRaw.getNmTipoDestinacaoVotos()),
                      candidato));
 

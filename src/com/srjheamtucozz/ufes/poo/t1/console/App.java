@@ -52,7 +52,7 @@ public class App {
         // porque ele usa muitos Map que depende da uniquidade do número do
         // candidato
         RawEleicao rawEleicao = TseReader.readEleicao(cmdArgs.getCaminhoArquivoCandidatos(),
-                cmdArgs.getCaminhoArquivoVotacao());
+                cmdArgs.getCaminhoArquivoVotacao(), cmdArgs.getTipoCargo());
 
         // TODO: Computar tudo que tem que computar com esses dados e imprimir na tela
 

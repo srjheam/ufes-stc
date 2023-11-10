@@ -103,19 +103,10 @@ public class EleicaoStats {
         return sexos;
     }
 
-    private int computeVotos(){
-        int votos = 0;
-        for (CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()) {
-            votos += c.getNumeroVotos();
-        }
-
-        return votos;
-    }
-
     private int computeNominais(){
         int votos = 0;
-        for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
-            votos += c.getNumeroVotos();
+        for(LegendaVotacao c : this.eleicao.getVotacao().getLegendasSorted()){
+            votos += c.getNumeroVotosNominais();
         }
 
         return votos;
@@ -123,8 +114,8 @@ public class EleicaoStats {
 
     private int computeLegenda(){
         int votos = 0;
-        for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
-            votos += c.getNumeroVotos();
+        for(LegendaVotacao c : this.eleicao.getVotacao().getLegendasSorted()){
+            votos += c.getNumeroVotosLegenda();
         }
 
         return votos;
@@ -315,8 +306,21 @@ public class EleicaoStats {
     }
 
     private void printTotalVotos() {
-        System.out.println("Total de votos válidos: " + computeVotos());
-        System.out.println("Total de votos nominais: " + computeNominais());
-        System.out.println("Total de votos de legenda: " + computeLegenda());
+        double nominais = computeNominais();
+        double legenda = computeLegenda();
+        double totais = nominais + legenda;
+
+        System.out.println("Total de votos válidos:    "
+            + totais);
+        System.out.println("Total de votos nominais:   "
+            + nominais
+            + " ("
+            + nominais * 100 / totais
+            +"%)");
+        System.out.println("Total de votos de legenda: "
+            + legenda
+            + " ("
+            + legenda * 100 / totais
+            + "%)");
     }
 }

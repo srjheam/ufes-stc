@@ -8,6 +8,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
+import java.util.function.Predicate;
 
 public class CsvReader {
     private LinkedList<String> importantColumns = new LinkedList<>();
@@ -49,7 +50,7 @@ public class CsvReader {
         return delimiter;
     }
 
-    public String[][] readAll() {
+    public List<String[]> readAll(Predicate<String[]> filter) {
         try (FileInputStream fin = new FileInputStream(this.getFilePath());
                 Scanner s = new Scanner(fin, this.getCharsetName())) {
             LinkedList<String> columns = new LinkedList<String>();
@@ -58,10 +59,11 @@ public class CsvReader {
                 lineScanner.useDelimiter(this.getDelimiter());
                 while (lineScanner.hasNext()) {
                     String token = lineScanner.next();
+                    token = token.substring( 1, token.length() - 1 );
                     columns.add(token);
                 }
             }
-            String[][] data = new String[(int) quantasLinhas(this.getFilePath())][this.importantColumns.size()];
+            List<String[]> data = new LinkedList<>();
             int j = 0;
             while (s.hasNextLine()) {
                 String[] importantArgs = new String[this.importantColumns.size()];
@@ -70,22 +72,29 @@ public class CsvReader {
                     int i = 0;
                     lineScanner.useDelimiter(this.getDelimiter());
                     for (String arg : columns) {
+                        String content = lineScanner.next();
+                        content = content.substring( 1, content.length() - 1 );
                         if (this.importantColumns.contains(arg)) {
-                            importantArgs[i++] = lineScanner.next();
-                        } else {
-                            lineScanner.next();
+                            importantArgs[i++] = content;
                         }
                     }
                 }
-                data[j++] = importantArgs;
+
+                if (filter.test(importantArgs)) {
+                    data.add(importantArgs);             
+                }
             }
 
             return data;
 
         } catch (Exception e) {
             e.printStackTrace();
-            return new String[0][0];
+            return new LinkedList<String[]>();
         }
+    }
+
+    public List<String[]> readAll() {
+        return readAll((arr) -> true);
     }
 
     private static int quantasLinhas(String fileName) {
