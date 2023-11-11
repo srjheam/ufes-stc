@@ -43,13 +43,18 @@ public class Mapper {
       Map<String, Map<String, Partido>> mapFederacoesPartidos = new HashMap<>();
 
       for (var candidatoRaw : raw) {
+         boolean util = candidatoRaw.getCdSituacaoCandidatoTot().equals("2")
+               || candidatoRaw.getCdSituacaoCandidatoTot().equals("16");
+
          var candidato = fromTse(candidatoRaw, dataRelatorio);
-         candidatos.put(candidatoRaw.getNrCandidato(), candidato);
-         candidatosVotacao.put(candidatoRaw.getNrCandidato(),
-               new CandidatoVotacao(
-                     parseEleitoFromTse(candidatoRaw.getCdSitTotTurno()),
-                     parseDestinacaoFromTse(candidatoRaw.getNmTipoDestinacaoVotos()),
-                     candidato));
+         if (util) {
+            candidatos.put(candidatoRaw.getNrCandidato(), candidato);
+            candidatosVotacao.put(candidatoRaw.getNrCandidato(),
+                  new CandidatoVotacao(
+                        parseEleitoFromTse(candidatoRaw.getCdSitTotTurno()),
+                        parseDestinacaoFromTse(candidatoRaw.getNmTipoDestinacaoVotos()),
+                        candidato));
+         }
 
          var partido = mapPartidos.get(candidatoRaw.getNrPartido());
          if (partido == null) {
@@ -71,11 +76,12 @@ public class Mapper {
          var partidosCandidato = mapPartidosCandidatos.get(candidatoRaw.getNrPartido());
          if (partidosCandidato == null) {
             partidosCandidato = new HashMap<String, Candidato>();
-            partidosCandidato.put(candidato.getNumero(), candidato);
+            if (util) 
+               partidosCandidato.put(candidato.getNumero(), candidato);
 
             mapPartidosCandidatos.put(candidatoRaw.getNrPartido(), partidosCandidato);
          }
-         else {
+         else if (util) {
             partidosCandidato.put(candidato.getNumero(), candidato);
          }
       }
@@ -86,7 +92,8 @@ public class Mapper {
 
          partidos.put(partidoCandidatos.getKey(),
                new Partido(partidoCandidatos.getKey(), partido.getSigla(), partido.getFederacao(),
-                     partidoCandidatos.getValue()));
+                     partidoCandidatos.getValue() == null ? new HashMap<String, Candidato>()
+                           : partidoCandidatos.getValue()));
       }
 
       var federacoes = new HashMap<String, Federacao>();
@@ -110,13 +117,13 @@ public class Mapper {
 
       for (var votacaoRaw : raw) {
          var nr = votacaoRaw.getNrVotavel();
-         var candidatoVotacao = candidatosVotacao.getOrDefault(nr, null);
-         if (nr.length() <= 2 || (candidatoVotacao != null && candidatoVotacao.isDestinacaoLegenda())) {
+         var cand = candidatosVotacao.getOrDefault(nr, null);
+         if (nr.length() <= 2 || (cand != null && cand.isDestinacaoLegenda())) {
             int votos = legendasVotos.getOrDefault(nr.substring(0, 2), 0);
             legendasVotos.put(nr.substring(0, 2), votos + Integer.parseInt(votacaoRaw.getQtVotos()));
          }
 
-         if (nr.length() <= 2 || candidatoVotacao == null) {
+         if (nr.length() <= 2 || cand == null) {
             nr = nr.substring(0, 2);
             var partido = mapEleicao.getPartidos().get(nr);
             if (partido == null)
@@ -125,11 +132,11 @@ public class Mapper {
             continue;
          }
 
-         candidatoVotacao.incNumeroVotos(Integer.parseInt(votacaoRaw.getQtVotos()));
+         cand.incNumeroVotos(Integer.parseInt(votacaoRaw.getQtVotos()));
 
-         if (!candidatoVotacao.isDestinacaoLegenda()) {
-            int votos = legendasNominais.getOrDefault(candidatoVotacao.getCandidato().getNumeroPartido(), 0);
-            legendasNominais.put(candidatoVotacao.getCandidato().getNumeroPartido(),
+         if (!cand.isDestinacaoLegenda()) {
+            int votos = legendasNominais.getOrDefault(cand.getCandidato().getNumeroPartido(), 0);
+            legendasNominais.put(cand.getCandidato().getNumeroPartido(),
                   votos + Integer.parseInt(votacaoRaw.getQtVotos()));
          }
       }
@@ -170,7 +177,11 @@ public class Mapper {
             }
             });
          for (Candidato candidato : partido.getCandidatos().values()) {
-            candidatos.add(candidatosVotacao.get(candidato.getNumero()));
+            CandidatoVotacao cand = candidatosVotacao.get(candidato.getNumero());
+            if (cand == null)
+               continue;
+
+            candidatos.add(cand);
          }
 
          var legenda = new LegendaVotacao(partido,

@@ -201,7 +201,7 @@ public class EleicaoStats {
     }
 
     private void printNumeroVagas() {
-        System.out.println("Numero de vagas: " + numeroVagas);
+        System.out.println("Número de vagas: " + numeroVagas);
         System.out.println();
     }
 
@@ -284,7 +284,10 @@ public class EleicaoStats {
                 return Integer.valueOf(p1.getLegenda().getNumero()) - Integer.valueOf(p2.getLegenda().getNumero());
             }
         });
-        partidosPrimeiroUltimo.addAll(this.eleicao.getVotacao().getLegendasSorted());
+        partidosPrimeiroUltimo.addAll(this.eleicao.getVotacao().getLegendasSorted()
+            .stream()
+            .filter(x -> x.getCandidatos().size() > 1)
+            .collect(Collectors.toList()));
 
         int i = 1;
         for(LegendaVotacao partido : partidosPrimeiroUltimo) {

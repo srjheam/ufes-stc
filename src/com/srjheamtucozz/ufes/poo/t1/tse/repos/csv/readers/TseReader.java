@@ -28,9 +28,7 @@ public class TseReader {
         List<RawCandidato> candidatos = new LinkedList<RawCandidato>();
         for(String[] candidato : csv.readAll(
             (cols) ->
-                cols[0].equals(cargo == Cargo.DEPUTADO_ESTADUAL ? "7" : "6")
-                && (cols[10].equals("2")
-                    || cols[10].equals("16")))){
+                cols[0].equals(cargo == Cargo.DEPUTADO_ESTADUAL ? "7" : "6"))){
             candidatos.add(CsvParser.parseCandidato(candidato));
         }
     
