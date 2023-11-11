@@ -64,6 +64,9 @@ public class Mapper {
 
             mapFederacoesPartidos.put(candidatoRaw.getNrFederacao(), federacaoPartidos);
          }
+         else {
+            federacaoPartidos.put(partido.getNumero(), partido);
+         }
 
          var partidosCandidato = mapPartidosCandidatos.get(candidatoRaw.getNrPartido());
          if (partidosCandidato == null) {
@@ -71,6 +74,9 @@ public class Mapper {
             partidosCandidato.put(candidato.getNumero(), candidato);
 
             mapPartidosCandidatos.put(candidatoRaw.getNrPartido(), partidosCandidato);
+         }
+         else {
+            partidosCandidato.put(candidato.getNumero(), candidato);
          }
       }
 
@@ -105,12 +111,17 @@ public class Mapper {
       for (var votacaoRaw : raw) {
          var nr = votacaoRaw.getNrVotavel();
          var candidatoVotacao = candidatosVotacao.getOrDefault(nr, null);
-         if (nr.length() <= 2 || candidatoVotacao == null || candidatoVotacao.isDestinacaoLegenda()) {
+         if (nr.length() <= 2 || (candidatoVotacao != null && candidatoVotacao.isDestinacaoLegenda())) {
             int votos = legendasVotos.getOrDefault(nr.substring(0, 2), 0);
             legendasVotos.put(nr.substring(0, 2), votos + Integer.parseInt(votacaoRaw.getQtVotos()));
          }
 
          if (nr.length() <= 2 || candidatoVotacao == null) {
+            nr = nr.substring(0, 2);
+            var partido = mapEleicao.getPartidos().get(nr);
+            if (partido == null)
+               continue;
+
             continue;
          }
 

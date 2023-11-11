@@ -45,7 +45,8 @@ public class TseReader {
         List<RawVotacao> votacoes = new LinkedList<RawVotacao>();
         for(String[] legenda : csv.readAll(
             (cols) ->
-                cols[0].equals(cargo == Cargo.DEPUTADO_ESTADUAL ? "7" : "6"))){
+                cols[0].equals(cargo == Cargo.DEPUTADO_ESTADUAL ? "7" : "6")
+                && !(cols[1].equals("95") || cols[1].equals("96") || cols[1].equals("97") || cols[1].equals("98")))){
             votacoes.add(CsvParser.parseVotacao(legenda));
         }
     

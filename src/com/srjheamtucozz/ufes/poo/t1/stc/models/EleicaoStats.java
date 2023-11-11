@@ -239,15 +239,16 @@ public class EleicaoStats {
         System.out.println("Teriam sido eleitos se a votação fosse majoritária, e não foram eleitos:");
         System.out.println("(com sua posição no ranking de mais votados)");
         
-        int i = 1;
+        int i = 0;
         for (CandidatoVotacao candidatoVotacao : this.eleicao.getVotacao().getCandidatosSorted()
                                                     .stream()
                                                     .limit(this.numeroVagas)
                                                     .collect(Collectors.toList())) {
+            i++;
             if (candidatoVotacao.isEleito())
                 continue;
 
-            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));            
+            System.out.println(linhaToString(i, this.candidatoToString(candidatoVotacao)));            
         }
     }
 
@@ -255,15 +256,16 @@ public class EleicaoStats {
         System.out.println("Eleitos, que se beneficiaram do sistema proporcional:");
         System.out.println("(com sua posição no ranking de mais votados)");
         
-        int i = 1;
+        int i = this.numeroVagas;
         for (CandidatoVotacao candidatoVotacao : this.eleicao.getVotacao().getCandidatosSorted()
                                                     .stream()
                                                     .skip(this.numeroVagas)
                                                     .collect(Collectors.toList())) {
+            i++;
             if (!candidatoVotacao.isEleito())
                 continue;
 
-            System.out.println(linhaToString(i++, this.candidatoToString(candidatoVotacao)));            
+            System.out.println(linhaToString(i, this.candidatoToString(candidatoVotacao)));            
         }
     }
 
