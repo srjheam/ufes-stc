@@ -48,16 +48,6 @@ public class EleicaoStats {
             .collect(Collectors.toList());
     }
 
-    // private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
-    //     Map<Partido, Candidato> partidos = new HashMap<>();
-        
-    //     for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
-    //         partidos.put(this.eleicao.getPartidos().get(c.getCandidato().getNumeroPartido()), c.getCandidato());
-    //     }
-
-    //     return partidos;
-    // }
-
     private void incrementMap(Map<Integer, Integer> map, int idx){
         map.merge((Integer)idx, (Integer)1, (a, b) -> a + 1); // map.put(idx, map.get(idx) + 1);
     }
