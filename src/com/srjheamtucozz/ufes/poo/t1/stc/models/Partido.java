@@ -13,6 +13,7 @@ public class Partido {
         this.numero = numero;
         this.sigla = sigla;
         this.federacao = federacao;
+        this.candidatos = new HashMap<>();
     }
 
     public Partido(String numero, String sigla, String federacao, Map<String, Candidato> candidatos) {

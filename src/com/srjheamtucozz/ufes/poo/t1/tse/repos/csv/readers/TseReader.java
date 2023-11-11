@@ -18,7 +18,7 @@ public class TseReader {
         return new RawEleicao(candidatos, votacoes);
     }
 
-    public static List<RawCandidato> readConsultaCandidatos(String path, Cargo cargo){
+    private static List<RawCandidato> readConsultaCandidatos(String path, Cargo cargo){
         String[] importantValues = {"CD_CARGO", "NR_CANDIDATO", "NM_URNA_CANDIDATO", "NR_PARTIDO",
                                     "SG_PARTIDO", "NR_FEDERACAO", "DT_NASCIMENTO", "CD_GENERO",
                                     "CD_SIT_TOT_TURNO", "NM_TIPO_DESTINACAO_VOTOS", "CD_SITUACAO_CANDIDATO_TOT"};
@@ -37,7 +37,7 @@ public class TseReader {
         return candidatos;
     }
     
-    public static List<RawVotacao> readVotacaoSecao(String path, Cargo cargo){
+    private static List<RawVotacao> readVotacaoSecao(String path, Cargo cargo){
         String[] importantValues = {"CD_CARGO", "NR_VOTAVEL", "QT_VOTOS"};
     
         CsvReader csv = new CsvReader(path, "ISO-8859-1", ";", importantValues);

@@ -39,28 +39,13 @@ public class App {
 
         CmdArgs cmdArgs = CmdArgsParser.parseCmdArgs(args);
 
-        // TODO:
-        // adicionar um predicate ao readEleicao (e também ao CsvReader) para
-        // filtrar os candidatos e votações a intenção por trás disso é
-        // extrair apenas os dados produtivos do arquivo, que é grande e pode
-        // ocupar muita memória atoa
-        //
-        // também existem candidatos indeferidos porque tem o mesmo número que
-        // outro candidato deferido
-        //
-        // esses candidatos não importam na contagem e são danosos pro programa
-        // porque ele usa muitos Map que depende da uniquidade do número do
-        // candidato
         RawEleicao rawEleicao = TseReader.readEleicao(cmdArgs.getCaminhoArquivoCandidatos(),
                 cmdArgs.getCaminhoArquivoVotacao(), cmdArgs.getTipoCargo());
-
-        // TODO: Computar tudo que tem que computar com esses dados e imprimir na tela
 
         Eleicao eleicao = Mapper.fromTse(rawEleicao, cmdArgs.getData());
 
         EleicaoStats stats = new EleicaoStats(eleicao, cmdArgs.getTipoCargo());
 
         stats.print();
-
     }
 }

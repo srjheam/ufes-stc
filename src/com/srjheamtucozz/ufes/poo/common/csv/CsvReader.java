@@ -1,10 +1,6 @@
 package com.srjheamtucozz.ufes.poo.common.csv;
 
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -64,7 +60,6 @@ public class CsvReader {
                 }
             }
             List<String[]> data = new LinkedList<>();
-            int j = 0;
             while (s.hasNextLine()) {
                 String[] importantArgs = new String[this.importantColumns.size()];
                 String line = s.nextLine();
@@ -95,18 +90,5 @@ public class CsvReader {
 
     public List<String[]> readAll() {
         return readAll((arr) -> true);
-    }
-
-    private static int quantasLinhas(String fileName) {
-        Path path = Paths.get(fileName);
-
-        int lines = 0;
-        try {
-            lines = (int) Files.lines(path).count();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return lines;
     }
 }

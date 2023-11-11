@@ -20,23 +20,6 @@ public class EleicaoStats {
     private Map<Integer, Integer> eleitosFaixaEtaria;
     private Map<Integer, Integer> eleitosSexo;
 
-        // Seu programa deve ler os dados dos dois arquivos descritos acima (cujos nomes serão passados pela linha de
-        // comando) e gerar diversos relatórios na saída padrão:
-
-        // 1. Número de vagas (= número de eleitos);
-        // 2. Candidatos eleitos (nome completo e na urna), indicado partido e número de votos nominais;
-        // 3. Candidatos mais votados dentro do número de vagas;
-        // 4. Candidatos não eleitos e que seriam eleitos se a votação fosse majoritária;
-        // 5. Candidatos eleitos no sistema proporcional vigente, e que não seriam eleitos se a votação fosse
-        // majoritária, isto é, pelo número de votos apenas que um candidato recebe diretamente;
-        // 6. Votos totalizados por partido e número de candidatos eleitos;
-        // 7. Primeiro e último colocados de cada partido (com nome da urna, número do candidato e total de votos
-        // nominais). Partidos que não possuírem candidatos com um número positivo de votos válidos devem ser
-        // ignorados;
-        // 8. Distribuição de eleitos por faixa etária, considerando a idade do candidato no dia da eleição;
-        // 9. Distribuição de eleitos por sexo;
-        // 10. Total de votos, total de votos nominais e total de votos de legenda.
-
     public EleicaoStats(Eleicao eleicao, Cargo cargo) {
         this.eleicao = eleicao;
         this.cargo = cargo;
@@ -58,16 +41,6 @@ public class EleicaoStats {
             .filter(CandidatoVotacao::isEleito)
             .collect(Collectors.toList());
     }
-
-    // private Map<Partido, Candidato> computePartidos(Candidato[] candidatos){
-    //     Map<Partido, Candidato> partidos = new HashMap<>();
-        
-    //     for(CandidatoVotacao c : this.eleicao.getVotacao().getCandidatosSorted()){
-    //         partidos.put(this.eleicao.getPartidos().get(c.getCandidato().getNumeroPartido()), c.getCandidato());
-    //     }
-
-    //     return partidos;
-    // }
 
     private void incrementMap(Map<Integer, Integer> map, int idx){
         map.merge((Integer)idx, (Integer)1, (a, b) -> a + 1); // map.put(idx, map.get(idx) + 1);
