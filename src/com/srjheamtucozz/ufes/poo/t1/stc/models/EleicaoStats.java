@@ -1,8 +1,10 @@
 package com.srjheamtucozz.ufes.poo.t1.stc.models;
 
+import java.text.NumberFormat;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.TreeSet;
@@ -20,24 +22,11 @@ public class EleicaoStats {
     private Map<Integer, Integer> eleitosFaixaEtaria;
     private Map<Integer, Integer> eleitosSexo;
 
-        // Seu programa deve ler os dados dos dois arquivos descritos acima (cujos nomes serão passados pela linha de
-        // comando) e gerar diversos relatórios na saída padrão:
-
-        // 1. Número de vagas (= número de eleitos);
-        // 2. Candidatos eleitos (nome completo e na urna), indicado partido e número de votos nominais;
-        // 3. Candidatos mais votados dentro do número de vagas;
-        // 4. Candidatos não eleitos e que seriam eleitos se a votação fosse majoritária;
-        // 5. Candidatos eleitos no sistema proporcional vigente, e que não seriam eleitos se a votação fosse
-        // majoritária, isto é, pelo número de votos apenas que um candidato recebe diretamente;
-        // 6. Votos totalizados por partido e número de candidatos eleitos;
-        // 7. Primeiro e último colocados de cada partido (com nome da urna, número do candidato e total de votos
-        // nominais). Partidos que não possuírem candidatos com um número positivo de votos válidos devem ser
-        // ignorados;
-        // 8. Distribuição de eleitos por faixa etária, considerando a idade do candidato no dia da eleição;
-        // 9. Distribuição de eleitos por sexo;
-        // 10. Total de votos, total de votos nominais e total de votos de legenda.
+    private NumberFormat nf = NumberFormat.getInstance(new Locale("pt", "BR"));
 
     public EleicaoStats(Eleicao eleicao, Cargo cargo) {
+        Locale.setDefault(new Locale("pt", "BR"));
+
         this.eleicao = eleicao;
         this.cargo = cargo;
 
@@ -75,7 +64,8 @@ public class EleicaoStats {
 
     private Map<Integer, Integer> computeFaixaEtaria(Eleicao eleicao){
         Map<Integer, Integer> faixas = new HashMap<>();
-        for(Candidato c : this.eleicao.getCandidatos().values()){
+        for(CandidatoVotacao cand : this.candidatosEleitos){
+            Candidato c = cand.getCandidato();
             if(c.getIdade() < 30)
                 incrementMap(faixas, 0);
             else if(c.getIdade() < 40)
@@ -93,7 +83,8 @@ public class EleicaoStats {
 
     private Map<Integer, Integer> computeSexo(Eleicao eleicao){
         Map<Integer, Integer> sexos = new HashMap<>();
-        for(Candidato c : this.eleicao.getCandidatos().values()){
+        for(CandidatoVotacao cand : this.candidatosEleitos){
+            Candidato c = cand.getCandidato();
             if(c.isSexo())
                 incrementMap(sexos, 1);
             else
@@ -124,16 +115,35 @@ public class EleicaoStats {
     public void print() {
         
         printNumeroVagas();
-        printCandidatosEleitos();
-        printCandidatosMaisVotados();
-        printCandidatosNaoEleitos();
-        printCandidatosEleitosSistemaProporcional();
-        printVotacaoPartidos();
-        printPrimeiroUltimoColocadoPartido();
-        printDistribuicaoEleitosFaixaEtaria();
-        printDistribuicaoEleitosSexo();
-        printTotalVotos();
+        System.out.println();
 
+        printCandidatosEleitos();
+        System.out.println();
+
+        printCandidatosMaisVotados();
+        System.out.println();
+
+        printCandidatosNaoEleitos();
+        System.out.println();
+
+        printCandidatosEleitosSistemaProporcional();
+        System.out.println();
+
+        printVotacaoPartidos();
+        System.out.println();
+
+        printPrimeiroUltimoColocadoPartido();
+        System.out.println();
+
+        printDistribuicaoEleitosFaixaEtaria();
+        System.out.println();
+
+        printDistribuicaoEleitosSexo();
+        System.out.println();
+
+        printTotalVotos();
+        System.out.println();
+        System.out.println();
     }
     
     private static String linhaToString(int i, String content) {
@@ -143,41 +153,41 @@ public class EleicaoStats {
     }
 
     private String candidatoToString(CandidatoVotacao candidatoVotacao) {
-        return (candidatoVotacao.isDestinacaoLegenda() ? "*" : "")
+        return (!candidatoVotacao.getCandidato().getNumeroFederacao().equals("-1") ? "*" : "")
                 + candidatoVotacao.getCandidato().getNomeUrna()
                 + " ("
                 + this.eleicao.getPartidos().get(candidatoVotacao.getCandidato().getNumeroPartido()).getSigla()
                 + ", "
-                + candidatoVotacao.getNumeroVotos()
+                + this.nf.format(candidatoVotacao.getNumeroVotos())
                 + " voto"
                 + (candidatoVotacao.getNumeroVotos() > 1 ? "s" : "")
                 + ")";
     }
 
-    private static String partidoToString(LegendaVotacao legendaVotacao) {
+    private String partidoToString(LegendaVotacao legendaVotacao) {
         return legendaVotacao.getLegenda().getSigla()
                 + " - "
                 + legendaVotacao.getLegenda().getNumero()
                 + ", "
-                + legendaVotacao.getNumeroVotosTotais()
+                + this.nf.format(legendaVotacao.getNumeroVotosTotais())
                 + " voto"
                 + (legendaVotacao.getNumeroVotosTotais() > 1 ? "s" : "")
                 + " ("
-                + legendaVotacao.getNumeroVotosNominais()
+                + this.nf.format(legendaVotacao.getNumeroVotosNominais())
                 + " "
                 + (legendaVotacao.getNumeroVotosNominais() > 1 ? "nominais" : "nominal")
                 + " e "
-                + legendaVotacao.getNumeroVotosLegenda()
+                + this.nf.format(legendaVotacao.getNumeroVotosLegenda())
                 + " de legenda"
                 + "), "
-                + legendaVotacao.getNumeroCandidatosEleitos()
+                + this.nf.format(legendaVotacao.getNumeroCandidatosEleitos())
                 + " candidato"
                 + (legendaVotacao.getNumeroCandidatosEleitos() > 1 ? "s" : "")
                 + " eleito"
                 + (legendaVotacao.getNumeroCandidatosEleitos() > 1 ? "s" : "");
     }
 
-    private static String partidoPrimeiroUltimoToString(LegendaVotacao legendaVotacao) {
+    private String partidoPrimeiroUltimoToString(LegendaVotacao legendaVotacao) {
         return legendaVotacao.getLegenda().getSigla()
                 + " - "
                 + legendaVotacao.getLegenda().getNumero()
@@ -186,7 +196,7 @@ public class EleicaoStats {
                 + " ("
                 + legendaVotacao.getCandidatos().first().getCandidato().getNumero()
                 + ", "
-                + legendaVotacao.getCandidatos().first().getNumeroVotos()
+                + this.nf.format(legendaVotacao.getCandidatos().first().getNumeroVotos())
                 + " voto"
                 + (legendaVotacao.getCandidatos().first().getNumeroVotos() > 1 ? "s" : "")
                 + ") / "
@@ -194,7 +204,7 @@ public class EleicaoStats {
                 + " ("
                 + legendaVotacao.getCandidatos().last().getCandidato().getNumero()
                 + ", "
-                + legendaVotacao.getCandidatos().last().getNumeroVotos()
+                + this.nf.format(legendaVotacao.getCandidatos().last().getNumeroVotos())
                 + " voto"
                 + (legendaVotacao.getCandidatos().last().getNumeroVotos() > 1 ? "s" : "")
                 + ")";
@@ -292,35 +302,35 @@ public class EleicaoStats {
 
     private void printDistribuicaoEleitosFaixaEtaria() {
         System.out.println("Eleitos, por faixa etária (na data da eleição)");
-        System.out.println("      Idade < 30: " + eleitosFaixaEtaria.get(0) + " (" + (eleitosFaixaEtaria.get(0) * 100 / numeroVagas) + "%)");
-        System.out.println("30 <= Idade < 40: " + eleitosFaixaEtaria.get(1) + " (" + (eleitosFaixaEtaria.get(1) * 100 / numeroVagas) + "%)");
-        System.out.println("40 <= Idade < 50: " + eleitosFaixaEtaria.get(2) + " (" + (eleitosFaixaEtaria.get(2) * 100 / numeroVagas) + "%)");
-        System.out.println("50 <= Idade < 60: " + eleitosFaixaEtaria.get(3) + " (" + (eleitosFaixaEtaria.get(3) * 100 / numeroVagas) + "%)");
-        System.out.println("60 <= Idade     : " + eleitosFaixaEtaria.get(4) + " (" + (eleitosFaixaEtaria.get(4) * 100 / numeroVagas) + "%)");
+        System.out.println("      Idade < 30: " + nf.format(eleitosFaixaEtaria.getOrDefault(0, 0)) + " (" + String.format("%.2f", (eleitosFaixaEtaria.getOrDefault(0, 0) * 100 / (double)numeroVagas)) + "%)");
+        System.out.println("30 <= Idade < 40: " + nf.format(eleitosFaixaEtaria.getOrDefault(1, 0)) + " (" + String.format("%.2f", (eleitosFaixaEtaria.getOrDefault(1, 0) * 100 / (double)numeroVagas)) + "%)");
+        System.out.println("40 <= Idade < 50: " + nf.format(eleitosFaixaEtaria.getOrDefault(2, 0)) + " (" + String.format("%.2f", (eleitosFaixaEtaria.getOrDefault(2, 0) * 100 / (double)numeroVagas)) + "%)");
+        System.out.println("50 <= Idade < 60: " + nf.format(eleitosFaixaEtaria.getOrDefault(3, 0)) + " (" + String.format("%.2f", (eleitosFaixaEtaria.getOrDefault(3, 0) * 100 / (double)numeroVagas)) + "%)");
+        System.out.println("60 <= Idade     : " + nf.format(eleitosFaixaEtaria.getOrDefault(4, 0)) + " (" + String.format("%.2f", (eleitosFaixaEtaria.getOrDefault(4, 0) * 100 / (double)numeroVagas)) + "%)");
     }
 
     private void printDistribuicaoEleitosSexo() {
         System.out.println("Eleitos, por gênero:");
-        System.out.println("Feminino: " + eleitosSexo.get(0) + " (" + (eleitosSexo.get(0) * 100 / numeroVagas) + "%)");
-        System.out.println("Masculino: " + eleitosSexo.get(1) + " (" + (eleitosSexo.get(1) * 100 / numeroVagas) + "%)");
+        System.out.println("Feminino:  " + nf.format(eleitosSexo.get(0)) + " (" + String.format("%.2f", (eleitosSexo.get(0) * 100 / (double)numeroVagas)) + "%)");
+        System.out.println("Masculino: " + nf.format(eleitosSexo.get(1)) + " (" + String.format("%.2f", (eleitosSexo.get(1) * 100 / (double)numeroVagas)) + "%)");
     }
 
     private void printTotalVotos() {
-        double nominais = computeNominais();
-        double legenda = computeLegenda();
-        double totais = nominais + legenda;
+        int nominais = computeNominais();
+        int legenda = computeLegenda();
+        int totais = nominais + legenda;
 
         System.out.println("Total de votos válidos:    "
-            + totais);
+            + nf.format(totais));
         System.out.println("Total de votos nominais:   "
-            + nominais
+            + nf.format(nominais)
             + " ("
-            + nominais * 100 / totais
+            + String.format("%.2f", nominais * 100 / (double)totais)
             +"%)");
         System.out.println("Total de votos de legenda: "
-            + legenda
+            + nf.format(legenda)
             + " ("
-            + legenda * 100 / totais
+            + String.format("%.2f", (legenda * 100 / (double)totais))
             + "%)");
     }
 }

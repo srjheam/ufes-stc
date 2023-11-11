@@ -1,6 +1,7 @@
 package com.srjheamtucozz.ufes.poo.t1.console;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 import com.srjheamtucozz.ufes.poo.common.util.Validation;

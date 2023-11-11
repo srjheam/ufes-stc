@@ -104,16 +104,16 @@ public class Mapper {
 
       for (var votacaoRaw : raw) {
          var nr = votacaoRaw.getNrVotavel();
-         if (nr.length() <= 2 || candidatosVotacao.get(nr).isDestinacaoLegenda()) {
-            int votos = legendasVotos.getOrDefault(nr, 0);
-            legendasVotos.put(nr, votos + Integer.parseInt(votacaoRaw.getQtVotos()));
+         var candidatoVotacao = candidatosVotacao.getOrDefault(nr, null);
+         if (nr.length() <= 2 || candidatoVotacao == null || candidatoVotacao.isDestinacaoLegenda()) {
+            int votos = legendasVotos.getOrDefault(nr.substring(0, 2), 0);
+            legendasVotos.put(nr.substring(0, 2), votos + Integer.parseInt(votacaoRaw.getQtVotos()));
          }
 
-         if (nr.length() <= 2) {
+         if (nr.length() <= 2 || candidatoVotacao == null) {
             continue;
          }
 
-         var candidatoVotacao = candidatosVotacao.get(nr);
          candidatoVotacao.incNumeroVotos(Integer.parseInt(votacaoRaw.getQtVotos()));
 
          if (!candidatoVotacao.isDestinacaoLegenda()) {
